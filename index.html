@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<body style="margin:0; background:#000; color:white; overflow:hidden;">
+<canvas id="gameCanvas"></canvas>
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let player = {x: 400, y: 400, w: 30, h: 30, color: "#FFD700"};
+let camera = {x: 0, y: 0};
+
+// Definição dos locais de São Paulo
+let locations = [
+    {name: "Avenida Paulista", x: 100, y: 100, w: 600, h: 50, color: "#555"},
+    {name: "Centro Historico", x: 800, y: 500, w: 300, h: 300, color: "#777"},
+    {name: "SUA CASA", x: 1200, y: 100, w: 50, h: 50, color: "red"}
+];
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Camera centralizada no player
+    camera.x = player.x - canvas.width / 2;
+    camera.y = player.y - canvas.height / 2;
+
+    // Desenha cada local
+    let currentArea = "";
+    locations.forEach(loc => {
+        ctx.fillStyle = loc.color;
+        ctx.fillRect(loc.x - camera.x, loc.y - camera.y, loc.w, loc.h);
+        ctx.fillStyle = "white";
+        ctx.fillText(loc.name, loc.x - camera.x + 10, loc.y - camera.y + 20);
+        
+        // Verifica se o player está na área
+        if (player.x > loc.x && player.x < loc.x + loc.w && 
+            player.y > loc.y && player.y < loc.y + loc.h) {
+            currentArea = loc.name;
+        }
+    });
+
+    // Desenha Avatar
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x - camera.x, player.y - camera.y, player.w, player.h);
+
+    // Texto de Localização
+    ctx.fillStyle = "yellow";
+    ctx.font = "20px Arial";
+    ctx.fillText("Voce esta em: " + currentArea, 20, 30);
+
+    requestAnimationFrame(draw);
+}
+
+// Movimento (Toque ou Clique)
+window.addEventListener('touchstart', (e) => {
+    player.x = e.touches[0].clientX + camera.x - 15;
+    player.y = e.touches[0].clientY + camera.y - 15;
+});
+
+draw();
+</script>
+</body>
+</html>
