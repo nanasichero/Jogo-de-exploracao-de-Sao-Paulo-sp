@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body, html { margin:0; padding:0; height:100%; font-family: sans-serif; }
+        #creator-ui { position:absolute; top:20%; left:10%; right:10%; background:white; padding:20px; border-radius:15px; box-shadow:0 0 20px rgba(0,0,0,0.5); z-index:2000; text-align:center; }
+        #map { height: 100vh; width: 100vw; display:none; }
+    </style>
+</head>
+<body>
+
+<!-- TELA DE CRIAÇÃO -->
+<div id="creator-ui">
+    <h2>Crie seu Avatar</h2>
+    <p>Cole o link de uma imagem (ex: foto de um herói ou seu personagem):</p>
+    <input type="text" id="avatarUrl" placeholder="Link da imagem .png" style="width:80%; padding:10px;">
+    <br><br>
+    <button onclick="startGame()" style="padding:15px 30px; font-size:18px; background:blue; color:white; border:none; border-radius:10px;">COMEÇAR EXPLORAÇÃO</button>
+</div>
+
+<!-- MAPA -->
+<div id="map"></div>
+
+<script>
+    function startGame() {
+        let url = document.getElementById('avatarUrl').value || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+        
+        document.getElementById('creator-ui').style.display = 'none';
+        document.getElementById('map').style.display = 'block';
+
+        var map = L.map('map').setView([-23.5850, -46.6450], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        var avatarIcon = L.divIcon({
+            html: `<img src="${url}" style="width:50px; height:50px; border-radius:50%; border:3px solid blue;">`,
+            iconSize: [50, 50],
+            iconAnchor: [25, 25]
+        });
+
+        var avatar = L.marker([-23.5850, -46.6450], {icon: avatarIcon}).addTo(map);
+
+        map.on('click', function(e) {
+            avatar.setLatLng(e.latlng);
+        });
+    }
+</script>
+</body>
+</html>
